@@ -24,7 +24,7 @@ agent any
             steps {
                 sh 'echo Testing'
             }
-        }
+        }}
 
 
     }

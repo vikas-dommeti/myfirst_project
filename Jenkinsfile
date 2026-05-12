@@ -1,28 +1,26 @@
-// pipeline {
-//     agent any
+pipeline {
+    agent any
 
-//     stages {
+    stages {
 
-//         stage('Git Pull') {
-//             steps {
-//                 echo 'Pulling Code'
-//             }
-//         }
+        stage('Git Pull') {
+            steps {
+                echo 'Pulling Code'
+            }
+        }
 
-//         stage('Build') {
-//             steps {
-//                 sh 'echo Build Started'
-//             }
-//         }
+        stage('Build') {
+            steps {
+                sh 'echo Build Started'
+            }
+        }
 
-//         stage('Test') {
-//             steps {
-//                 sh 'echo Testing'
-//             }
-//         }
+        stage('Test') {
+            steps {
+                sh 'echo Testing'
+            }
+        }
 
         
-//     }
-// }
-
-hello World!!
+    }
+}

@@ -1,29 +1,84 @@
+// // pipeline {
+// //     agent any
+
+// //     stages {
+
+// //         stage('Git Pull') {
+// //             steps {
+// //                 echo 'Pulling Code'
+// //             }
+// //         }
+
+// //         stage('Build') {
+// //             steps {
+// //                 sh 'echo Build Started'
+// //             }
+// //         }
+
+// //         stage('Test') {
+// //             steps {
+// //                 sh 'echo Testing'
+// //             }
+// //         }
+
+        
+// //     }
+// // }
+
+
 // pipeline {
 //     agent any
 
 //     stages {
 
-//         stage('Git Pull') {
+//         stage('Clone Repository') {
 //             steps {
-//                 echo 'Pulling Code'
+//                 echo "Repository cloned"
 //             }
 //         }
 
-//         stage('Build') {
+//         stage('List Files') {
 //             steps {
-//                 sh 'echo Build Started'
+//                 sh 'ls -lrt'
 //             }
 //         }
 
-//         stage('Test') {
+//         stage('Test All Files') {
 //             steps {
-//                 sh 'echo Testing'
+//                 sh '''
+//                 echo "Starting file testing..."
+
+//                 for file in *.md
+//                 do
+//                     echo "========================="
+//                     echo "Testing File: $file"
+//                     echo "========================="
+
+//                     if [ -f "$file" ]; then
+//                         echo "$file exists"
+//                         cat "$file"
+//                         echo "$file tested successfully"
+//                     else
+//                         echo "$file not found"
+//                         exit 1
+//                     fi
+//                 done
+//                 '''
 //             }
 //         }
+//     }
 
-        
+//     post {
+//         success {
+//             echo 'All files tested successfully'
+//         }
+
+//         failure {
+//             echo 'Some file testing failed'
+//         }
 //     }
 // }
+
 
 
 pipeline {
@@ -31,50 +86,51 @@ pipeline {
 
     stages {
 
-        stage('Clone Repository') {
+        stage('Checkout Code') {
             steps {
-                echo "Repository cloned"
+                echo 'Pulling code from GitHub'
             }
         }
 
-        stage('List Files') {
+        stage('Build') {
             steps {
-                sh 'ls -lrt'
+                sh 'mvn clean compile'
             }
         }
 
-        stage('Test All Files') {
+        stage('Run Unit Tests') {
             steps {
-                sh '''
-                echo "Starting file testing..."
+                sh 'mvn test'
+            }
+        }
 
-                for file in *.md
-                do
-                    echo "========================="
-                    echo "Testing File: $file"
-                    echo "========================="
+        stage('Package Application') {
+            steps {
+                sh 'mvn package'
+            }
+        }
 
-                    if [ -f "$file" ]; then
-                        echo "$file exists"
-                        cat "$file"
-                        echo "$file tested successfully"
-                    else
-                        echo "$file not found"
-                        exit 1
-                    fi
-                done
-                '''
+        stage('Docker Build') {
+            steps {
+                sh 'docker build -t vikasdommeti/java-app:v1 .'
+            }
+        }
+
+        stage('Docker Push') {
+            steps {
+                sh 'docker push vikasdommeti/java-app:v1'
             }
         }
     }
 
     post {
+
         success {
-            echo 'All files tested successfully'
+            echo 'Pipeline completed successfully'
         }
 
         failure {
-            echo 'Some file testing failed'
+            echo 'Tests failed or build failed'
         }
     }
 }
